@@ -1,14 +1,14 @@
 {
   "name": "alpaca",
   "version": "1.0.0",
-  "description": "",
+  "description": "分析Html文件依赖的js文件和css文件",
   "main": "index.js",
   "scripts": {
-    "test": "supervisor --debug-brk ./m2c.js",
+    "test": "supervisor --debug-brk ./debug.js",
     "start": "supervisor bin/alp"
   },
   "bin": {
-    "alpaca": "bin/alp"
+    "alp": "bin/alp"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,6 @@
     "esprima": "*",
     "estraverse": "4.1.0",
     "iconv-lite": "^0.4.13",
-    "sm-count": "^1.0.4",
     "tap": "^2.1.1"
   }
 }

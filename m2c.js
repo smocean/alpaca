@@ -17,7 +17,7 @@ var pargram = require('commander'),
 			ns: 'sm',
 			base: base,
 			exclude: [],
-			rdExt: ['css','html'],
+			readcss: false,
 		}
 	}
 
@@ -67,90 +67,96 @@ module.exports = function(argv) {
 			}
 
 			for (var i = 0, len = dirs.length; i < len; i++) {
+				
+					_.getAllFiles(_.path.resolve(base, dirs[i]), 'html', function(dir, path) {
 
-				_.getAllFiles(_.path.resolve(base, dirs[i]), 'html', function(dir, path) {
-
-					var htmlObj = _.getTextDeps(path, {
-						base: base,
-						word: 'require'
-					});
-					var deps = htmlObj.deps;
-
-					var dep, resultJs = {},
-						resultCss = {},
-						absUrl, key, content = htmlObj.content,
-
-						outputHtmlPath = _.path.resolve(output, _.path.relative(base, path));
-
-
-					console.log('parsing	' + path);
-
-					if (deps.length == 0) {
-
-						_.write(outputHtmlPath, content, 'utf-8');
-
-						console.log('writing	' + outputHtmlPath);
-
-						return;
-
-					}
-					for (var i = 0, len = deps.length; i < len; i++) {
-						dep = deps[i];
-
-						absUrl = _.path.resolve(_.path.dirname(path), dep);
-
-
-						key = _.path.relative(base, absUrl);
-						if (!(key in result)) {
-							if (_.extname(absUrl) === 'css') {
-								resultCss = _.merge(resultCss, _.getTextDeps(absUrl, {
-									base: base,
-									word: word
-								}));
-								result = _.merge(result, resultCss);
-							} else {
-								resultJs = _.merge(resultJs, _(absUrl, config.m2c));
-
-								result = _.merge(result, resultJs);
-							}
-						}
-						name = _.path.basename(absUrl).replace('.', '[.]{1}');
-						regExp = new RegExp('<!--\\s*\\b' + word + '\\b\\s*\\(\\s*[\'\"]{1}([^\'\"]+)(?=' + name + ')' + name + '\\s*[\'\"]{1}\\s*\\)\\s*-->', 'gi');
-
-
-
-						content = content.replace(regExp, function() {
-							var map = result[key].map.adeps;
-
-							var str = '';
-
-							var relPath = '';
-
-							for (var i = 0; i < map.length; i++) {
-								relPathpath = _.path.relative(dir, map[i]);
-								str += buildTag(relPathpath);
-							}
-
-							str += buildTag(_.path.relative(dir, key));
-
-							return str;
-
+						var htmlObj = _.getTextDeps(path, {
+							base: base,
+							word: 'require'
 						});
-						_.write(outputHtmlPath, content, 'utf-8');
+						var deps = htmlObj.deps;
 
-						console.log('writing	' + outputHtmlPath);
-					}
+						var dep, resultJs = {},
+							resultCss = {},
+							absUrl, key, content = htmlObj.content,
 
-					var absK, objK;
-					for (var k in result) {
-						absK = _.path.resolve(output, k);
-						objK = result[k];
+							outputHtmlPath = _.path.resolve(output, _.path.relative(base, path));
 
-						!objK.writed && (_.write(absK, objK.content), console.log('writing	' + absK));
-						objK.writed = true;
-					}
 
-				});
+						console.log('parsing	' + path);
+
+						if (deps.length == 0) {
+
+							_.write(outputHtmlPath, content, 'utf-8');
+
+							console.log('writing	' + outputHtmlPath);
+
+							return;
+
+						}
+						for (var i = 0, len = deps.length; i < len; i++) {
+							dep = deps[i];
+
+							absUrl = _.path.resolve(_.path.dirname(path), dep);
+
+
+							key = _.path.relative(base, absUrl);
+							if (!(key in result)) {
+								if (_.extname(absUrl) === 'css') {
+									resultCss = _.merge(resultCss, _.getTextDeps(absUrl, {
+										base: base,
+										word: word
+									}));
+									result = _.merge(result, resultCss);
+								} else {
+									try {
+										resultJs = _.merge(resultJs, _(absUrl, config.m2c));
+									}
+									catch(e){
+										console.dir(e);
+										process.abort();
+									}
+									result = _.merge(result, resultJs);
+								}
+							}
+							name = _.path.basename(absUrl).replace('.', '[.]{1}');
+							regExp = new RegExp('<!--\\s*\\b' + word + '\\b\\s*\\(\\s*[\'\"]{1}([^\'\"]+)(?=' + name + ')' + name + '\\s*[\'\"]{1}\\s*\\)\\s*-->', 'gi');
+
+
+
+							content = content.replace(regExp, function() {
+								var map = result[key].map.adeps;
+
+								var str = '';
+
+								var relPath = '';
+
+								for (var i = 0; i < map.length; i++) {
+									relPathpath = _.path.relative(dir, map[i]);
+									str += buildTag(relPathpath);
+								}
+
+								str += buildTag(_.path.relative(dir, key));
+
+								return str;
+
+							});
+							_.write(outputHtmlPath, content, 'utf-8');
+
+							console.log('writing	' + outputHtmlPath);
+						}
+
+						var absK, objK;
+						for (var k in result) {
+							absK = _.path.resolve(output, k);
+							objK = result[k];
+
+							!objK.writed && (_.write(absK, objK.content), console.log('writing	' + absK));
+							objK.writed = true;
+						}
+
+					});
+				
 			}
 
 
