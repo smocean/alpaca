@@ -1,0 +1,42 @@
+{
+  "name": "alpaca",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "supervisor --debug-brk ./m2c.js",
+    "start": "supervisor bin/alp"
+  },
+  "bin": {
+    "alpaca": "bin/alp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ybbjegj/alpaca.git"
+  },
+  "keywords": [
+    "module",
+    "closure"
+  ],
+  "author": {
+    "name": "guomilo",
+    "email": "guomilo@gmail.com"
+  },
+  "engines": {
+    "node": ">0.10.0"
+  },
+  "bugs": {
+    "url": "https://github.com/ybbjegj/alpaca/issues"
+  },
+  "homepage": "https://github.com/ybbjegj/alpaca#readme",
+  "dependencies": {
+    "commander": "*",
+    "detective": "^4.2.0",
+    "escodegen": "*",
+    "esprima": "*",
+    "estraverse": "4.1.0",
+    "iconv-lite": "^0.4.13",
+    "sm-count": "^1.0.4",
+    "tap": "^2.1.1"
+  }
+}
