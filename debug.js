@@ -2,14 +2,14 @@ var fs = require('fs');
 var path = require('path');
 
 var alpaca = require('./lib/m2c');
-var base = '/Users/gml/github/module2closure/';
+var base = '/Users/gml/github/testJS/';
 try
 {
-var result = alpaca('/Users/gml/github/module2closure/demo/page/index.js',{
+var result = alpaca('/Users/gml/github/testJS/d.js',{
 	base:base,
 	ns:'gml',
-	rdExt: [],
-	exclude: ['/Users/gml/github/module2closure/demo/js/'],
+	
+	exclude: [],
 });
 }
 catch(e){
