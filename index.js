@@ -1,5 +1,19 @@
-var m2c = require('./lib/m2c');
+var alp = module.exports = {};
 
+Object.defineProperty(global, 'alp', {
+	enumerable: true,
+	writable: false,
+	value: alp
+});
 
+alp._ = require('./lib/unit.js');
 
-module.exports =m2c;
+alp.log = require('./lib/log.js');
+
+alp.jsParse = require('./lib/js-parse.js');
+
+alp.nonJsParse = require('./lib/non-js-parse.js');
+
+alp.config = require('./lib/config.js');
+
+alp.buildMap = require('./lib/buildMap.js');

@@ -2,35 +2,13 @@ var pargram = require('commander'),
 
 	colors = require('colors'),
 
-	_ = require('./index.js'),
+	alp = require('./index.js'),
 
-	base = process.cwd(),
+	_ = alp._,
 
-	word,
+	conf_path = _.path.resolve(process.cwd(), 'alp-conf.js'),
 
-	conf_path = _.path.resolve(base, './alp-conf.json'),
-
-	version,
-
-	config = {
-		main: [],
-		m2c: {
-			word: 'require',
-			ns: 'sm',
-			base: base,
-			exclude: [],
-			readcss: false,
-		}
-	}
-
-if (_.exists(conf_path)) {
-	_.merge(config, _.readJSON(conf_path), true);
-
-} else {
-	_.write(conf_path, JSON.stringify(config));
-}
-
-word = config.m2c.word;
+	version;
 
 version = _.readJSON(_.path.resolve(__dirname, './package.json')).version;
 
@@ -40,127 +18,98 @@ function buildTag(path) {
 
 	if (_.extname(path) === 'css') {
 		return '<link rel="stylesheet" type="text/css" href="' + path + '">\n\r';
-	} else {
+	} else if (_.isJsFile(path)) {
 		return '<script type="text/javascript" src="' + path + '"></script>\n\r';
+	} else {
+		return '';
 	}
 
 }
 
+function getOutputPath(output, src) {
+	return _.path.resolve(output, _.path.relative(alp.config.get('base'), src));
+}
+
+
 
 module.exports = function(argv) {
-
-	var regExp, oDir, debug;
-
+	var dest;
 	pargram
 		.option('-V,--version', 'version info', function() {
-
 			console.log(version.bold.green);
 
 		})
 		.command('release')
 		.description('analysis dependent and output')
-		.option('-d,--dest <path>', 'output dir', function(path) {
-			oDir = path;
+		.option('-d,--dest <path>', 'release output destination', function(src) {
+			dest = src;
 		})
 		.action(function() {
 			var result = {},
-				output = _.path.resolve(base, oDir || 'output'),
+				conf,
+				output,
+				base, dirs, deps, _result;
 
-				dirs = config.main;
+			if (!_.isFile(conf_path)) {
+				alp.log.warning('missing config file [' + conf_path + ']');
+			} else {
+				require(conf_path);
+			}
 
-			if (dirs.length == 0) {
+			base = alp.config.get('base');
+
+			output = _.path.resolve(base, dest || 'output');
+
+			dirs = alp.config.get('main');
+
+			if (dirs.length === 0) {
 				dirs.push(base);
 			}
 			console.time('');
+
 			for (var i = 0, len = dirs.length; i < len; i++) {
-				_.getAllFiles(_.path.resolve(base, dirs[i]), 'html', [output], function(dir, path) {
-					var htmlObj = _.getTextDeps(path, {
-						base: base,
-						word: 'require'
-					});
-					var deps = htmlObj.deps;
+				_.forEachDir(_.path.resolve(base, dirs[i]), function(path) {
+					var depName, content, key;
+					if (_.isFile(path) && (_.extname(path) === 'html' || _.extname(path) === 'htm') && !_.filter(path, [_.path.join(output, '*')])) {
+						_result = alp.nonJsParse(path);
 
-					var dep, resultJs = {},
-						resultCss = {},
-						absUrl, key, content = htmlObj.content,
-
-						outputHtmlPath = _.path.resolve(output, _.path.relative(base, path));
-
-					process.stdout.write('.'.green);
-
-					if (deps.length == 0) {
-
-						_.write(outputHtmlPath, content, 'utf-8');
-						return;
-
-					}
-					for (var i = 0, len = deps.length; i < len; i++) {
-						dep = deps[i];
-
-						if (_.extname(dep) != 'css' && _.extname(dep) !== 'js') {
-							continue;
+						deps = _result.deps || [];
+						if (deps.length == 0) {
+							_.write(getOutputPath(output, path), _result.content);
 						}
-						absUrl = _.path.resolve(base, dep);
-						key = _.path.relative(base, absUrl);
+						for (var j = 0, jLen = deps.length; j < jLen; j++) {
+							result = _.merge(result, alp.buildMap(_.path.resolve(_.path.dirname(path), deps[j])))
+							depName = _.path.basename(deps[i]).replace('.', '[.]{1}');
+							key = _.path.relative(base, _.path.resolve(base, deps[j]));
 
-						try {
-							if (!(key in result)) {
-								if (_.extname(absUrl) === 'css') {
+							regExp = new RegExp('<!--\\s*\\b' + word + '\\b\\s*\\(\\s*[\'\"]{1}([^\'\"]+)(?=' + depName + ')' + depName + '\\s*[\'\"]{1}\\s*\\)\\s*-->', 'gi');
+							content = _result.content.replace(regExp, function() {
+								var map = result[key].map.adeps;
+								var str = '';
 
-									resultCss = _.merge(resultCss, _.parserTextDeps(absUrl, {
-										base: base,
-										word: word
-									}));
+								for (var i = 0, len = map.length; i < len; i++) {
 
-
-									
-									result = _.merge(result, resultCss);
-								} else if (_.extname(absUrl) === 'js') {
-
-									resultJs = _.merge(resultJs, _(absUrl, config.m2c));
-
-									result = _.merge(result, resultJs);
+									str += buildTag(_.path.relative(_.path.dirname(path), map[i]));
 								}
-							}
-						} catch (e) {
-							console.log('\n\r'+e);
-							process.abort();
+								str += buildTag(_.path.relative(_.path.dirname(path), key));
+
+								return str;
+							});
+
+							_.write(getOutputPath(output, path), content);
+							process.stdout.write('.'.green);
 						}
 
-						name = _.path.basename(absUrl).replace('.', '[.]{1}');
-						regExp = new RegExp('<!--\\s*\\b' + word + '\\b\\s*\\(\\s*[\'\"]{1}([^\'\"]+)(?=' + name + ')' + name + '\\s*[\'\"]{1}\\s*\\)\\s*-->', 'gi');
-						content = content.replace(regExp, function() {
-							var map = _.extname(key) === 'css' ? result[key].map : result[key].map.adeps;
 
-							var str = '';
-
-							var relPath = '';
-
-							for (var i = 0; i < map.length; i++) {
-								relPathpath = _.path.relative(dir, map[i]);
-								str += buildTag(relPathpath);
-							}
-
-							str += buildTag(_.path.relative(dir, key));
-
-							return str;
-
-						});
-						_.write(outputHtmlPath, content, 'utf-8');
-
-						process.stdout.write('.'.green);
 					}
+				})
+			}
 
-					var absK, objK;
-					for (var k in result) {
-						absK = _.path.resolve(output, k);
-						objK = result[k];
-						!objK.writed && (_.write(absK, objK.content), process.stdout.write('.'.green));
-						objK.writed = true;
-					}
 
-				});
 
+			for (var k in result) {
+				_.write(getOutputPath(output, k), result[k].content);
+				process.stdout.write('.'.green);
 			}
 
 			console.timeEnd('');
@@ -168,6 +117,5 @@ module.exports = function(argv) {
 		});
 
 	pargram.parse(argv);
-
 
 }
