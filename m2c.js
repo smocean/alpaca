@@ -85,12 +85,10 @@ module.exports = function(argv) {
 						for (var j = 0, jLen = deps.length; j < jLen; j++) {
 
 							result = _.merge(result, alp.buildMap(_.path.resolve(base, deps[j])))
-							console.log(Object.keys(result));
 							depName = _.path.basename(deps[j]).replace(/\./g, '[.]{1}');
 
 							key = _.path.relative(base, _.path.resolve(base, deps[j]));
 							regExp = new RegExp('<!--\\s*\\b' + word + '\\b\\s*\\(\\s*[\'\"]{1}([^\'\"]*)(?=' + depName + ')' + depName + '\\s*[\'\"]{1}\\s*\\)\\s*-->', 'gi');
-							console.log(regExp);
 							content = content.replace(regExp, function() {
 								var map = result[key].map.adeps;
 								var str = '';
