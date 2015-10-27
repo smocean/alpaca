@@ -48,20 +48,21 @@ module.exports = function(argv) {
 			var result = {},
 				conf,
 				output,
-				base, dirs, deps, _result;
+				base, dirs, deps, _result,
+				exclude;
 
 			if (!_.isFile(conf_path)) {
 				alp.log.warning('missing config file [' + conf_path + ']');
 			} else {
 				require(conf_path);
 			}
-
 			base = alp.config.get('base');
 
 			output = _.path.resolve(base, dest || 'output');
 
-			dirs = alp.config.get('main');
-
+			dirs = alp.config.get('main.include');
+			exclude = alp.config.get('main.exclude') || [];
+			exclude.push(_.path.join(output, '**'));
 			if (dirs.length === 0) {
 				dirs.push(base);
 			}
@@ -70,29 +71,30 @@ module.exports = function(argv) {
 			for (var i = 0, len = dirs.length; i < len; i++) {
 				_.forEachDir(_.path.resolve(base, dirs[i]), function(path) {
 					var depName, content, key;
-					if (_.isFile(path) && (_.extname(path) === 'html' || _.extname(path) === 'htm') && !_.filter(path, [_.path.join(output, '*')])) {
-						_result = alp.nonJsParse(path);
 
+					if (_.isFile(path) && (_.extname(path) === 'html' || _.extname(path) === 'htm') && !_.filter(path, exclude)) {
+						_result = alp.nonJsParse(path);
+						content = _result.content;
+						var _content;
 						deps = _result.deps || [];
 						if (deps.length == 0) {
 							_.write(getOutputPath(output, path), _result.content);
+							return;
 						}
 						for (var j = 0, jLen = deps.length; j < jLen; j++) {
-							result = _.merge(result, alp.buildMap(_.path.resolve(_.path.dirname(path), deps[j])))
-							depName = _.path.basename(deps[i]).replace('.', '[.]{1}');
-							key = _.path.relative(base, _.path.resolve(base, deps[j]));
+							result = _.merge(result, alp.buildMap(_.path.resolve(base, deps[j])))
+							depName = _.path.basename(deps[j]).replace(/\./g, '[.]{1}');
 
+							key = _.path.relative(base, _.path.resolve(base, deps[j]));
 							regExp = new RegExp('<!--\\s*\\b' + word + '\\b\\s*\\(\\s*[\'\"]{1}([^\'\"]+)(?=' + depName + ')' + depName + '\\s*[\'\"]{1}\\s*\\)\\s*-->', 'gi');
-							content = _result.content.replace(regExp, function() {
+							content = content.replace(regExp, function() {
 								var map = result[key].map.adeps;
 								var str = '';
-
 								for (var i = 0, len = map.length; i < len; i++) {
 
 									str += buildTag(_.path.relative(_.path.dirname(path), map[i]));
 								}
 								str += buildTag(_.path.relative(_.path.dirname(path), key));
-
 								return str;
 							});
 
@@ -104,7 +106,6 @@ module.exports = function(argv) {
 					}
 				})
 			}
-
 
 
 			for (var k in result) {
