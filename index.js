@@ -1,10 +1,11 @@
 var alp = module.exports = {};
-
-Object.defineProperty(global, 'alp', {
-	enumerable: true,
-	writable: false,
-	value: alp
-});
+if (!global.alp) {
+	Object.defineProperty(global, 'alp', {
+		enumerable: true,
+		writable: false,
+		value: alp
+	});
+}
 
 alp._ = require('./lib/unit.js');
 
