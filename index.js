@@ -11,10 +11,10 @@ alp._ = require('./lib/unit.js');
 
 alp.log = require('./lib/log.js');
 
-alp.jsParse = require('./lib/js-parse.js');
+alp.jsParse = require('./lib/jsParse.js');
 
-alp.nonJsParse = require('./lib/non-js-parse.js');
+alp.txtParse = require('./lib/txtParse.js');
 
 alp.config = require('./lib/config.js');
 
-alp.buildMap = require('./lib/buildMap.js');
+alp.parse = require('./lib/parse.js');

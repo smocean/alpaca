@@ -44,17 +44,23 @@ module.exports = function(argv) {
 		.option('-d,--dest <path>', 'release output destination', function(src) {
 			dest = src;
 		})
+		.option('-o,--optimize', 'with optimizing')
 		.action(function() {
 			var result = {},
 				conf,
 				output,
 				base, dirs, deps, _result,
-				exclude;
+				exclude,
+				options = arguments[arguments.length-1];
 
 			if (!_.isFile(conf_path)) {
 				alp.log.warning('missing config file [' + conf_path + ']');
 			} else {
 				require(conf_path);
+
+			}
+			if(options.optimize){
+				alp.config.set('optimizer',true);
 			}
 			base = alp.config.get('base');
 
@@ -73,18 +79,22 @@ module.exports = function(argv) {
 					var depName, content, key;
 
 					if (_.isFile(path) && (_.extname(path) === 'html' || _.extname(path) === 'htm') && !_.filter(path, exclude)) {
-						_result = alp.nonJsParse(path);
+						_result = alp.txtParse.parse({
+							src: path
+						});
 						content = _result.content;
 						var _content;
 						deps = _result.deps || [];
-						
+
 						if (deps.length == 0) {
 							_.write(getOutputPath(output, path), _result.content);
 							return;
 						}
 						for (var j = 0, jLen = deps.length; j < jLen; j++) {
 
-							result = _.merge(result, alp.buildMap(_.path.resolve(base, deps[j])))
+							result = _.merge(result, alp.parse({
+								src: _.path.resolve(base, deps[j])
+							}));
 							depName = _.path.basename(deps[j]).replace(/\./g, '[.]{1}');
 
 							key = _.path.relative(base, _.path.resolve(base, deps[j]));
