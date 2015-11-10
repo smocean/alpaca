@@ -8,12 +8,82 @@
 
 ## USAGE
 
-模块化的代码
 
-a.js
+
+### example
+
+a-object.js
 ```js
-module.exports = function(){
-	alert('a.js');
+
+module.exports = {
+	sayName: function(name) {
+		console.log(name);;;
+		var tt = '6';
+	}
 }
 
 ```
+b-function.js
+```js
+var aobj = require('./a-object.js');
+
+module.exports = function(word) {
+	aobj.sayName(word + 'test');
+}
+
+```
+#### 命令行
+
+```
+alp release -d ./output
+
+```
+
+#### output
+
+a-object.js
+
+```
+window.sm = window.sm || {};
+(function (sm) {
+	sm.a_object_js = {
+        sayName: function (name) {
+            console.log(name);;
+            var tt = '6';
+        }
+    };
+}(sm));
+```
+b-function.js
+```js
+window.sm = window.sm || {};
+(function (sm, a_object_js) {
+    var aobj = a_object_js;
+    sm.b_function_js = function (word) {
+        aobj.sayName(word + 'test');
+    };
+}(sm, sm.a_object_js));
+```
+### config说明
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
