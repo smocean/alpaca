@@ -1,4 +1,4 @@
-var alp = require('./index.js');
+/*var alp = require('./index.js');
 var _ = alp._;
 alp.config.merge({
 	base: process.cwd(),
@@ -18,4 +18,6 @@ for (var i in result) {
 
 }
 
-console.timeEnd('');
+console.timeEnd('');*/
+var test = require('./test.js');
+console.dir(test);
