@@ -1,6 +1,6 @@
 {
   "name": "alpaca-sm",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "分析Html文件依赖的js文件和css文件",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,6 @@
     "clean-css": "^3.4.6",
     "colors": "^1.1.2",
     "commander": "*",
-
     "escodegen": "*",
     "esprima": "*",
     "estraverse": "4.1.0",
