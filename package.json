@@ -1,14 +1,10 @@
 {
   "name": "alpaca-sm",
-  "version": "1.1.11",
+  "version": "2.0.0",
   "description": "分析Html文件依赖的js文件和css文件",
   "main": "index.js",
   "scripts": {
-    "test": "supervisor --debug-brk ./debug.js",
-    "start": "supervisor bin/alp"
-  },
-  "bin": {
-    "alp": "bin/alp"
+    "test": "supervisor --debug-brk ./debug.js"
   },
   "repository": {
     "type": "git",
