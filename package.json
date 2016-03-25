@@ -24,9 +24,8 @@
   "homepage": "https://github.com/ybbjegj/alpaca#readme",
   "dependencies": {
     "colors": "^1.1.2",
-    "commander": "*",
-    "escodegen": "*",
-    "esprima": "*",
+    "escodegen": "^1.8.0",
+    "esprima": "^2.7.2",
     "estraverse": "4.1.0",
     "iconv-lite": "^0.4.13"
   },
