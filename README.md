@@ -66,6 +66,10 @@ npm install alpaca-sm -g
     解释：排除一些已存在的使用require关键字的文件，比如用webpack或browerify打包的文件。
     类型：array | string | RegExp
     默认值：[]
+####include
+    解释：命中的文件才会被处理
+    类型：array | string | RegExp
+    默认值：[]
 ####isOptimizer
     解释：分析的文件是否是被压缩过的文件
     类型：boolean
