@@ -1,6 +1,6 @@
 {
   "name": "alpaca-sm",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "分析Html文件依赖的js文件和css文件",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,6 @@
   "homepage": "https://github.com/ybbjegj/alpaca#readme",
   "dependencies": {
     "colors": "^1.1.2",
-
     "escodegen": "^1.8.0",
     "esprima": "^2.7.2",
     "estraverse": "4.1.0",
