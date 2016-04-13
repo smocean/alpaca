@@ -84,10 +84,11 @@ npm install alpaca-sm -g
     解释：在js中出现requrie('../xx.css')时，是否读取css文件的内容
     类型：boolean
     默认值：false
-####readable.cssInHtml
+####readable.cssInHtml(已废弃)
     解释：在HTML文件的script标签使用require('../xx.css')是，是否读取css的内容
     类型：boolean
     默认值：false
+
 ####tmpl
     解释：css和js的引入模板
 

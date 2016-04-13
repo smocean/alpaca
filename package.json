@@ -1,5 +1,5 @@
 {
-  "name": "alpaca-sm-v2",
+  "name": "alpaca-sm",
   "version": "0.0.1",
   "description": "分析Html文件依赖的js文件和css文件",
   "main": "index.js",
