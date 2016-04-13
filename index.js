@@ -14,9 +14,9 @@ alp._ = require('./lib/util.js');
 
 alp.storage = alp.storage || {};
 
-alp.config = alp.conf || require('./lib/config.js');
+alp.config = alp.config || require('./lib/config.js');
 
 alp.File = require('./lib/file.js');
 
-alp.processor = require('./lib/processor.js');
+alp.processor = require('./lib/dispatcher.js');
 
