@@ -63,7 +63,7 @@ npm install alpaca-sm -g
     默认值：false
     说明：主要用于应对使用构建工具生成的文件，路径会被编译为基于项目root的相对路径，如fis
 ####exclude
-    解释：排除一些已存在的使用require关键字的文件，比如用webpack或browerify打包的文件。
+    解释：排除一些已存在的使用require关键字的文件，比如用webpack或browerify打包的文件
     类型：array | string | RegExp
     默认值：[]
 ####include
