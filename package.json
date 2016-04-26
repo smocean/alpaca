@@ -23,11 +23,11 @@
   },
   "homepage": "https://github.com/ybbjegj/alpaca#readme",
   "dependencies": {
-    "colors": "^1.1.2",
-    "escodegen": "^1.8.0",
-    "esprima": "^2.7.2",
-    "estraverse": "4.1.0",
-    "iconv-lite": "^0.4.13"
+    "colors": "1.1.2",
+    "escodegen": "1.8.0",
+    "esprima": "2.7.2",
+    "estraverse": "4.2.0",
+    "iconv-lite": "0.4.13"
   },
   "_shasum": "a14cfd4a4e3e5c58ced1507aa033b99d53ca678f",
   "_from": "alpaca-sm@^1.1.0",
@@ -50,6 +50,8 @@
   "publish_time": 1449141934910,
   "_cnpm_publish_time": 1449141934910,
   "_resolved": "http://registry.npm.taobao.org/alpaca-sm/download/alpaca-sm-1.1.9.tgz",
-  "devDependencies": {},
+  "devDependencies": {
+    "autod": "^2.5.2"
+  },
   "license": "MIT"
 }
