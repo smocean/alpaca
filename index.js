@@ -7,7 +7,6 @@ if (!global.alp) {
         value: alp
     });
 }
-
 alp.log = require('./lib/log.js');
 
 alp._ = require('./lib/util.js');
