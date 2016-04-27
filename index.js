@@ -8,7 +8,6 @@ if (!global.alp) {
     });
 }
 alp.log = require('./lib/log.js');
-
 alp._ = require('./lib/util.js');
 
 alp.storage = alp.storage || {};
